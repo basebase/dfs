@@ -36,3 +36,7 @@ At this point you can run
     
     java DFSClient.java
 ```
+
+### Operation flow chart
+![runing](https://github.com/basebase/dfs/blob/0.10.0/image/run.png?raw=true)
+
