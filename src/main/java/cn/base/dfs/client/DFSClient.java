@@ -74,17 +74,28 @@ public class DFSClient {
 		}
 	}
 	
-	public void writeData(String fileName) throws InterruptedException {
+	public void writeData(String fileName, String target) throws InterruptedException {
 		init();
 		boolean write = nameNode.isWrite(fileName);
 		if (write) {
-			nameNode.write(fileName, dataNode);
+			nameNode.write(fileName, target, dataNode);
 		}
+	}
+	
+	public List<String> listFiles(String path) throws InterruptedException {
+		init();
+		List<String> fileList = nameNode.fileList(path);
+		fileList.remove("_SUCCESS");
+		for (String file : fileList) {
+			System.out.print(file + ",");
+		}
+		return fileList;
 	}
 	
 	public static void main(String[] args) throws InterruptedException {
 		DFSClient client = new DFSClient();
-		client.readData("c");
-//		client.writeData("/Users/Joker/Desktop/c");
+//		client.readData("c");
+//		client.writeData("/Users/Joker/Desktop/d", "c");
+		client.listFiles("/c");
 	}
 }

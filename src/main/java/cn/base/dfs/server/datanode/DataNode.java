@@ -219,7 +219,7 @@ public class DataNode implements Serializable {
 	 * @param fileName
 	 * @throws InterruptedException
 	 */
-	public void wirte(String fileName) throws InterruptedException {
+	public void wirte(String fileName, String target) throws InterruptedException {
 		String dataNodeDir = (String) ProperConf.configuration.get("dfs.datanode.data.dir");
 		if (isCheck(dataNodeDir)) {
 			File originFile = new File(fileName);
@@ -236,7 +236,14 @@ public class DataNode implements Serializable {
 			try {
 
 				String dirName = originFile.getName();
-				writeHome = dataNodeDir + "/" + dirName;
+				writeHome = null;// dataNodeDir + "/" + dirName;
+
+				if (target != null && !target.equals("")) {
+					writeHome = dataNodeDir + "/" + target + "/" + dirName;
+				} else {
+					writeHome = dataNodeDir + "/" + dirName;
+				}
+				
 				File dirFile = new File(writeHome);
 				if (!dirFile.exists()) {
 					dirFile.mkdirs();

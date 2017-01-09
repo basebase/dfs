@@ -3,7 +3,9 @@ package cn.base.dfs.server.namenode;
 import java.io.File;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.time.chrono.IsoChronology;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -144,16 +146,16 @@ public class NameNode implements Serializable {
 			++run;
 			Thread.sleep(1000);
 		}
-		
+
 		if (blocks != null) {
-			
+
 			if (blocks.equals("NF")) {
 				LOGGER.info("File does not exist");
 				count = 0;
 				blocks = null; // 清空
 				return false;
 			}
-			
+
 			count = 0;
 			blocks = null; // 清空
 			return true;
@@ -178,22 +180,22 @@ public class NameNode implements Serializable {
 
 		boolean isWrite = DiskInfoUtil.getDiskSize(DATANODEDIR, fileName);
 		if (isWrite && !findFile(fileName)) {
-//			fileName = DATANODEDIR + "/" + fileName;
-//			DataNode dataNode = new DataNode();
-//			dataNode.wirte(fileName);
-//			LOGGER.info("write file success !");
+			// fileName = DATANODEDIR + "/" + fileName;
+			// DataNode dataNode = new DataNode();
+			// dataNode.wirte(fileName);
+			// LOGGER.info("write file success !");
 			return true;
 		}
 
 		LOGGER.info("Check whether the parameter is null ");
 		return false;
 	}
-	
-	public boolean write(String fileName, DataNode dataNode) {
+
+	public boolean write(String fileName, String target, DataNode dataNode) {
 		try {
-			
-//			fileName = DATANODEDIR + "/" + fileName;
-			dataNode.wirte(fileName);
+
+			// fileName = DATANODEDIR + "/" + fileName;
+			dataNode.wirte(fileName, target);
 			LOGGER.info("write file success !");
 			return true;
 		} catch (Exception e) {
@@ -259,6 +261,36 @@ public class NameNode implements Serializable {
 		}
 
 		return false;
+	}
+
+	/***
+	 * 不通过元数据信息(以后改)
+	 * 
+	 * @param path
+	 * @return
+	 */
+	public List<String> fileList(String path) {
+		if (!check(path))
+			return null;
+		
+		if (path.equals("/")) {
+			File fileDir = new File(DATANODEDIR);
+			String[] filelList = fileDir.list();
+			ArrayList<String> fileList = new ArrayList<String>(Arrays.asList(filelList));
+			return fileList;
+		} else {
+			
+			File fileDir = new File(DATANODEDIR + "/" + path);
+			File[] files = fileDir.listFiles();
+			ArrayList<String> fileList = new ArrayList<String>();
+			for (File f : files) {
+				if (f.isDirectory()) {
+					fileList.add(f.getName());
+				}
+			}
+			
+			return fileList;
+		}
 	}
 
 	/***
